@@ -57,7 +57,7 @@ func main() {
 
 	router := server.Group("/api")
 	router.GET("/jejetickets", func(ctx *gin.Context) {
-		message := "Welcome to EasyTickets"
+		message := "Welcome to JejeTickets"
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": message})
 	})
 
