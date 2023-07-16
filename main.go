@@ -1,15 +1,20 @@
 package main
 
 import (
+	"fmt"
 	"jejetickets/controllers"
 	"jejetickets/initializers"
+	"jejetickets/models"
 	"jejetickets/routes"
 	"log"
 	"net/http"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
+
+var DB *gorm.DB
 
 var (
 	server              *gin.Engine
@@ -43,11 +48,28 @@ func init() {
 	server = gin.Default()
 }
 
+func migrateDatabase() {
+	config, err := initializers.LoadConfig(".")
+	if err != nil {
+		log.Fatal("Could Not Load Env Variables", err)
+	}
+
+	initializers.ConnectDB(&config)
+
+	DB.AutoMigrate(&models.User{}, &models.Event{})
+	fmt.Println("---Migration Done---")
+}
+
 func main() {
+
 	config, err := initializers.LoadConfig(".")
 	if err != nil {
 		log.Fatal("🚀 Could not load environment variables", err)
 	}
+
+	initializers.ConnectDB(&config)
+
+	migrateDatabase()
 
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowOrigins = []string{"http://localhost:8000", config.ClientOrigin}
