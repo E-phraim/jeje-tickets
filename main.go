@@ -49,14 +49,11 @@ func init() {
 }
 
 func migrateDatabase() {
-	config, err := initializers.LoadConfig(".")
+	err := initializers.DB.AutoMigrate(&models.User{}, &models.Event{})
 	if err != nil {
-		log.Fatal("Could Not Load Env Variables", err)
+		log.Fatal("Migration Didnt Succeed", err)
 	}
 
-	initializers.ConnectDB(&config)
-
-	DB.AutoMigrate(&models.User{}, &models.Event{})
 	fmt.Println("---Migration Done---")
 }
 
