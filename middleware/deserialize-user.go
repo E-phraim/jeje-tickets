@@ -5,6 +5,7 @@ import (
 	"jejetickets/initializers"
 	"jejetickets/models"
 	"jejetickets/utils"
+	"log"
 	"net/http"
 	"strings"
 
@@ -19,16 +20,16 @@ func DeserializeUser() gin.HandlerFunc {
 		authorizationHeader := ctx.Request.Header.Get("Authorization")
 		fields := strings.Fields(authorizationHeader)
 
-		if len(fields) != 0 && fields[0] == "Bearer" {
+		if len(fields) != 0 && fields[0] == "Bearer" { 
 			token = fields[1]
 		} else if err == nil {
 			token = cookie
 		}
 
-		if token == "" {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": "You are not logged in"})
-			return
-		}
+		// if token == "" {
+		// 	ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": "You are not logged in"})
+		// 	return
+		// }
 
 		config, _ := initializers.LoadConfig(".")
 		sub, err := utils.ValidateToken(token, config.TokenSecret)
@@ -43,6 +44,8 @@ func DeserializeUser() gin.HandlerFunc {
 			ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "fail", "message": "Token not assigned to user anymore"})
 			return
 		}
+
+		log.Println("Received Token:", token)
 
 		ctx.Set("currentUser", user)
 		ctx.Next()
