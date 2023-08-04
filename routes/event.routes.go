@@ -21,6 +21,6 @@ func (ec *EventRouteController) EventRoute(rg *gin.RouterGroup) {
 	router.Use(middleware.DeserializeUser())
 	router.POST("/", ec.eventController.CreateEvent)
 	router.GET("/", ec.eventController.FindEvents)
-	router.PUT("/:eventId", ec.eventController.FindEventById)
+	router.GET("/:eventId", ec.eventController.FindEventById)
 	router.DELETE("/:eventId", ec.eventController.DeleteEvent)
 }
